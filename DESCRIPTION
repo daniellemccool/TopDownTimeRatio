@@ -1,6 +1,6 @@
-Package: TopDownTimeRatio
+Package: topdowntimeratio
 Type: Package
-Title: Top Down Time Ratio segmentation for coordinate trajectories
+Title: Top-Down Time Ratio segmentation for coordinate trajectories
 Version: 0.1.0
 Authors@R: person("Danielle", "McCool", email = "d.m.mccool@uu.nl",
     role = c("aut", "cre"))

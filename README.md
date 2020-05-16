@@ -1,13 +1,13 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# TopDownTimeRatio
+# topdowntimeratio
 
 <!-- badges: start -->
 
 <!-- badges: end -->
 
-The goal of TopDownTimeRatio is to condense sequences of longitudinal
+The goal of topdowntimeratio is to condense sequences of longitudinal
 GPS data into segments for ease of processing. The method used in this
 package is as outlined in Meratnia and Rolf (2004).
 
@@ -17,14 +17,14 @@ When it’s released (it isn’t yet), you can install the released version
 of TopDownTimeRatio from [CRAN](https://CRAN.R-project.org) with:
 
 ``` r
-install.packages("TopDownTimeRatio")
+install.packages("topdowntimeratio")
 ```
 
 And the development version from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("daniellemccool/TopDownTimeRatio")
+devtools::install_github("daniellemccool/topdowntimeratio")
 ```
 
 ## Example
@@ -36,7 +36,7 @@ differ from lon, lat and timestamp.
 Here we generate a single segment
 
 ``` r
-library(TopDownTimeRatio)
+library(topdowntimeratio)
 df <- data.frame(lon = c(5, 5.01, 5.02, 5.05),
                  lat = c(32.01, 32.04, 32.06, 32.10),
                  timestamp = c(500, 600, 800, 2000))

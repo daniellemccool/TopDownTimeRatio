@@ -11,7 +11,6 @@ NULL
 
 setup <- function(data) {
     # library(data.table)
-    setDT(data)
     data[, `:=`(timestamp_numeric, as.numeric(timestamp))]
     set(data, j = c("segment_start", "segment_end"), value = FALSE)
     data[1, `:=`(segment_start, TRUE)]
@@ -82,7 +81,7 @@ iterate <- function(data) {
 
 
 
-    data[, `:=`(dist, geodist(x = data.table(lon, lat), y = data.table(longitude = adjusted_lon,
+    data[, `:=`(dist, geodist::geodist(x = data.table(lon, lat), y = data.table(longitude = adjusted_lon,
         latitude = adjusted_lat), paired = TRUE))]
 
     data[, `:=`(segment_id, cumsum(segment_start))]
@@ -107,11 +106,12 @@ tdtr <- function(data,
                  max_segs = 5000,
                  n_segs = max_segs,
                  max_error = 200){
+    setDT(data)
     setnames(data, col_names$timestamp_col, "timestamp")
     setnames(data, col_names$latitude_col, "lat")
     setnames(data, col_names$longitude_col, "lon")
 
-    data <- TopDownTimeRatio::setup(data)
+    setup(data)
 
     i <- 1
     while(max(data$dist) > 200 & (i < max_segs) & (i < n_segs)){
@@ -119,7 +119,7 @@ tdtr <- function(data,
         i <- i + 1
     }
 
-    data
+    data[]
 }
 
 

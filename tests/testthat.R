@@ -1,4 +1,4 @@
 library(testthat)
-library(TopDownTimeRatio)
+library(topdowntimeratio)
 
-test_check("TopDownTimeRatio")
+test_check("topdowntimeratio")

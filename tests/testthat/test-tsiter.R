@@ -1,4 +1,4 @@
-library(TopDownTimeRatio)
+library(topdowntimeratio)
 library(testthat)
 library(data.table)
 
