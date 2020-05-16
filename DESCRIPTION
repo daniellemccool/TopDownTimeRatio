@@ -1,0 +1,21 @@
+Package: TopDownTimeRatio
+Type: Package
+Title: Top Down Time Ratio segmentation for coordinate trajectories
+Version: 0.1.0
+Authors@R: person("Danielle", "McCool", email = "d.m.mccool@uu.nl",
+    role = c("aut", "cre"))
+Description: This package applies the compression technique specified in 
+    Meratnia and de By (2004) on timestamped coordinate trajectories. This is an
+    improvement on the well-known Douglas-Peucker algorithm for segmentation 
+    that operates not on the basis of perpendicular distances, but instead
+    distances with respect to time.
+License: GPL-2
+Encoding: UTF-8
+LazyData: true
+Imports:
+    data.table,
+    geodist
+Depends: R (>= 4.0.0)
+RoxygenNote: 7.1.0
+Suggests: 
+    testthat
