@@ -1,0 +1,81 @@
+---
+output: github_document
+references:
+- id: meratnia2004spatiotemporal
+  title: Spatiotemporal compression techniques for moving point objects
+  author: 
+  - family: Meratnia
+    given: Nirvana
+  - family: Rolf
+    given: A
+  container-title: International Conference on Extending Database Technology
+  page: 765--782
+  issued: 
+    year: 2004
+  publisher: Springer
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# TopDownTimeRatio
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+The goal of TopDownTimeRatio is to condense sequences of longitudinal GPS data into segments for ease of processing. The method used in this package is as outlined in @meratnia2004spatiotemporal. 
+
+## Installation
+
+When it's released (it isn't yet), you can install the released version of TopDownTimeRatio from [CRAN](https://CRAN.R-project.org) with:
+
+``` r
+install.packages("TopDownTimeRatio")
+```
+
+And the development version from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("daniellemccool/TopDownTimeRatio")
+```
+## Example
+
+Basic usage requires that your data has at least longitude and latitude coordinates as well as a timestamp. You can provide the names if they differ from lon, lat and timestamp.
+
+Here we generate a single segment
+
+```{r example}
+library(TopDownTimeRatio)
+df <- data.frame(lon = c(5, 5.01, 5.02, 5.05),
+                 lat = c(32.01, 32.04, 32.06, 32.10),
+                 timestamp = c(500, 600, 800, 2000))
+
+res <- tdtr(df, n_segs = 1)
+
+print(res)
+```
+
+
+Plot example, initial segment
+```{r plot, echo = FALSE}
+plot(res$lon, res$lat)
+segments(res$seg_start_lon, res$seg_start_lat, res$seg_end_lon, res$seg_end_lat)
+```
+
+
+Plot example, new segment at greatest distance
+```{r plot, echo = FALSE}
+res <- tdtr(df, n_segs = 2)
+plot(res$lon, res$lat)
+segments(res$seg_start_lon, res$seg_start_lat, res$seg_end_lon, res$seg_end_lat)
+```
+
