@@ -66,11 +66,11 @@ print(res)
 #> 4:         0.05      1.00000000    0.000
 ```
 
-Plot example
-<img src="man/figures/README-pressure-1.png" width="100%" />
+Plot example, initial segment
+<img src="man/figures/README-plot-1.png" width="100%" />
 
-In that case, don’t forget to commit and push the resulting figure
-files, so they display on GitHub\!
+Plot example, new segment at greatest distance
+<img src="man/figures/README-plot2-1.png" width="100%" />
 
 <div id="refs" class="references">
 

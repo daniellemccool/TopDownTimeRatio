@@ -73,7 +73,7 @@ segments(res$seg_start_lon, res$seg_start_lat, res$seg_end_lon, res$seg_end_lat)
 
 
 Plot example, new segment at greatest distance
-```{r plot, echo = FALSE}
+```{r plot2, echo = FALSE}
 res <- tdtr(df, n_segs = 2)
 plot(res$lon, res$lat)
 segments(res$seg_start_lon, res$seg_start_lat, res$seg_end_lon, res$seg_end_lat)
