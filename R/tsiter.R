@@ -10,7 +10,7 @@ NULL
 #' @importFrom geodist geodist
 
 setup <- function(data) {
-    # library(data.table)
+
     data[, `:=`(timestamp_numeric, as.numeric(timestamp))]
     set(data, j = c("segment_start", "segment_end"), value = FALSE)
     data[1, `:=`(segment_start, TRUE)]
@@ -114,7 +114,7 @@ tdtr <- function(data,
     setup(data)
 
     i <- 1
-    while(max(data$dist) > 200 & (i < max_segs) & (i < n_segs)){
+    while(max(data$dist) > max_error & (i < max_segs) & (i < n_segs)){
         iterate(data)
         i <- i + 1
     }
