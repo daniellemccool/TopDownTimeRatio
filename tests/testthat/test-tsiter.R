@@ -104,4 +104,6 @@ test_that("iterate calculates dur and perc correctly",{
   expect_equal(dt$perc_of_seg_dur, (df2$timestamp - df2$start_time)/df2$duration)
   })
 
-
+test_that("iterate respects max_err distance",{
+  ## todo
+})
