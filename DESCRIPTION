@@ -15,7 +15,7 @@ LazyData: true
 Imports:
     data.table,
     geodist
-Depends: R (>= 4.0.0)
+Depends: R (>= 3.6.0)
 RoxygenNote: 7.1.0
 Suggests: 
     testthat

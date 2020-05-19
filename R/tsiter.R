@@ -54,21 +54,31 @@ iterate <- function(data) {
 
     setorder(data, timestamp_numeric)
 
+
     data[, `:=`(seg_start_lat = lat[1],
                 seg_start_lon = lon[1],
                 seg_start_time = timestamp_numeric[1]),
          segment_id]
+
 
     data[, `:=`(seg_end_lat = lat[.N],
                 seg_end_lon = lon[.N],
                 seg_end_time = timestamp_numeric[.N]),
          seg_end_id]
 
-    data[segment_end == TRUE, `:=`(seg_end_lat = lat[.N],
-                                    seg_end_lon = lon[.N],
-                                    seg_end_time = timestamp_numeric[.N]),
-         segment_id]
+    data[, temp.seg_end_lat := shift(seg_end_lat, -1)]
+    data[, temp.seg_end_lon := shift(seg_end_lon, -1)]
+    data[, temp.seg_end_ts := shift(seg_end_time, -1)]
 
+    data[segment_end == TRUE & segment_start == TRUE,
+         `:=`(seg_end_lat = temp.seg_end_lat,
+              seg_end_lon = temp.seg_end_lon,
+              seg_end_time = temp.seg_end_ts)]
+
+
+    data[, `:=`(temp.seg_end_lat = NULL,
+                temp.seg_end_lon = NULL,
+                temp.seg_end_ts = NULL)]
 
     data[, `:=`(seg_dur = seg_end_time - seg_start_time, seg_dist_lat = seg_end_lat - seg_start_lat,
         seg_dist_lon = seg_end_lon - seg_start_lon)]
@@ -85,7 +95,7 @@ iterate <- function(data) {
         latitude = adjusted_lat), paired = TRUE))]
 
     data[, `:=`(segment_id, cumsum(segment_start))]
-
+    data[, `:=`(seg_end_id, shift(segment_id, fill = 1))]
 }
 
 

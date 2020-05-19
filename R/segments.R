@@ -46,3 +46,8 @@ convertCoordsToDist <- function(data, coord_cols){
 
 }
 
+## Add error to this function
+
+## Add segment id
+
+## fix segment dist
