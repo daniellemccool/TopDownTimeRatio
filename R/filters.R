@@ -18,7 +18,7 @@ meanFilter <- function(coord, n=5){
 #' @param coord A vector of coordinates over which to apply a mean filter
 #' @param n The number of values to average (best when odd-numbered)
 #'
-#' @return A vector of mean-averaged coordinates
+#' @return A vector of median-averaged coordinates
 #' @export
 #'
 

@@ -2,6 +2,8 @@
 
 export(getSegments)
 export(iterate)
+export(meanFilter)
+export(medianFilter)
 export(setup)
 export(singleSegmentSynchError)
 export(tdtr)
