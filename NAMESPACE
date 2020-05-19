@@ -3,6 +3,7 @@
 export(getSegments)
 export(iterate)
 export(setup)
+export(singleSegmentSynchError)
 export(tdtr)
 import(data.table)
 importFrom(geodist,geodist)

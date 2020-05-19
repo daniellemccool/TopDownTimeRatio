@@ -1,6 +1,19 @@
-isZero <- Vectorize(function(x) isTRUE(all.equal(x, 0, tolerance = 1e-26)))
+#' Calculate the Single Segment Synchronous Error on a \code{tdtr} object
+#'
+#' \code{singleSegmentSynchError} solves for the average distance with respect
+#' to time between the approximated segment returned by the top-down time ratio
+#' algorithm and the 'true' segment formed by two adjacent recorded points.
+#'
+#'
+#'
+#'
+#' @param res Segmented results from \code{tdtr}
+#' @param tol Tolerance for zero comparisons. May vary with time scale.
+#' @return Adds by reference a column with segment error as given in Meratnia & de By \(2004\)
+#' @export
 
-singleSegmentSynchError <- function(res){
+singleSegmentSynchError <- function(res, tol = 1e-24){
+
   res[, lat1 := lat]
   res[, lon1 := lon]
   res[, lat2 := shift(lat, -1)]
@@ -17,7 +30,6 @@ singleSegmentSynchError <- function(res){
   res[, dy1 := lat1 - alat1]
   res[, dx2 := lon2 - alon2]
   res[, dy2 := lat2 - alat2]
-  res[, .(dx1, dy1, dx2, dy2)]
 
   res[, c1 := ((dx1 - dx2)^2 + (dy1 - dy2)^2)]
   res[, c2 := 2 * ((dx2 *t1 - dx1*t2) * (dx1-dx2) + (dy2*t1 - dy1*t2) * (dy1-dy2))]
@@ -25,17 +37,30 @@ singleSegmentSynchError <- function(res){
   res[, c4 := t2 - t1]
   res[, detr := c2^2 - 4*c1*c3]
 
-  res[isZero(c1), case := "directseg"]
-  res[isZero(c1), segment_err := sqrt(c3)/(c4)]
+  res[c1 < tol, case := "directseg"]
+  res[case == "directseg", segment_err := sqrt(c3)/(c4)]
 
-  res[isZero(detr) & c1 > 0 & (dx1 == 0) & (dy1 == 0),
+  res[ detr < tol &
+        c1 > 0 &
+        dx1 < tol &
+        dy1 < tol,
         case := "sharedendpoint"]
-  res[isZero(detr) & c1 > 0 & (isZero(dx1)) & (isZero(dy1)),
+
+  res[detr < tol &
+        c1 > 0 &
+        dx1 < tol &
+        dy1 < tol,
         segment_err := .5*sqrt(dx2^2+dy2^2)]
 
-  res[isZero(detr) & c1 > 0 & isZero(dx2) & isZero(dy2),
+  res[ detr < tol &
+         c1 > 0 &
+         dx2 < tol &
+         dy2 < tol,
         case := "sharedendpoint"]
-  res[isZero(detr) & c1 > 0 & isZero(dx2) & isZero(dy2),
+  res[detr < tol &
+        c1 > 0 &
+        dx2 < tol &
+        dy2 < tol,
         segment_err := .5*sqrt(dx1^2 + dy1^2)]
 
   res[detr < 0 & is.na(case),
@@ -51,5 +76,5 @@ singleSegmentSynchError <- function(res){
   cols.to.remove <- c("c1", "c2", "c3", "c4", "t1", "t2", "dx1", "dx2", "dy1", "dy2",
                       "detr", "t1int", "t2int", "alat1", "alat2", "alon1", "alon2")
   set(res, j = cols.to.remove,
-      value = rep(NULL, length(cols.to.remove)))
+      value = rep(NULL, length(cols.to.remove)))[]
 }
