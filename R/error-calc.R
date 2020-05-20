@@ -38,7 +38,7 @@ singleSegmentSynchError <- function(res, tol = 1e-24){
   force(res)
   res[, case := NULL]
   res[c1 < tol, case := "directseg"]
-  res[C1 < tol, segment_err := sqrt(c3)/(c4)]
+  res[c1 < tol, segment_err := sqrt(c3)/(c4)]
 
   res[ discr < tol &
         c1 > 0 &
