@@ -7,7 +7,7 @@ NULL
 #' @param data A data.frame or data.table containing lat, lon and timestamp
 #' @return A data.table with numeric timestamp, and an initial segment
 #' @export
-#' @importFrom geodist geodist
+#' @importFrom geodist geodist_vec
 
 setup <- function(data) {
 
@@ -34,9 +34,10 @@ setup <- function(data) {
     data[!(segment_start | segment_end), `:=`(adjusted_lat = seg_start_lat + (perc_of_seg_dur *
                                                                                   seg_dist_lat), adjusted_lon = seg_start_lon + (perc_of_seg_dur * seg_dist_lon))]
 
-    data[, `:=`(dist, geodist::geodist(x = data.table(lon, lat), y = data.table(longitude = adjusted_lon,
-                                                                       latitude = adjusted_lat), paired = TRUE))]
+    # data[, `:=`(dist, geodist::geodist(x = data.table(lon, lat), y = data.table(longitude = adjusted_lon,
+    #                                                                    latitude = adjusted_lat), paired = TRUE))]
 
+    data[, dist := geodist::geodist_vec(x1 = lon, y1 = lat, x2 = adjusted_lon, y2 = adjusted_lat, paired = TRUE)]
 }
 
 #' Perform one iteration of segmentation
@@ -91,8 +92,10 @@ iterate <- function(data) {
 
 
 
-    data[, `:=`(dist, geodist::geodist(x = data.table(lon, lat), y = data.table(longitude = adjusted_lon,
-        latitude = adjusted_lat), paired = TRUE))]
+    # data[, `:=`(dist, geodist::geodist(x = data.table(lon, lat), y = data.table(longitude = adjusted_lon,
+    #     latitude = adjusted_lat), paired = TRUE))]
+
+    data[, dist := geodist::geodist_vec(x1 = lon, y1 = lat, x2 = adjusted_lon, y2 = adjusted_lat, paired = TRUE)]
 
     data[, `:=`(segment_id, cumsum(segment_start))]
     data[, `:=`(seg_end_id, shift(segment_id, fill = 1))]

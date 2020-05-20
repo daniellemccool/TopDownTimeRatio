@@ -14,7 +14,7 @@ Encoding: UTF-8
 LazyData: true
 Imports:
     data.table,
-    geodist
+    geodist (>= 0.0.4)
 Depends: R (>= 3.6.0)
 RoxygenNote: 7.1.0
 Suggests: 
