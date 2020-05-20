@@ -8,8 +8,8 @@
 #' @export
 #'
 
-meanFilter <- function(coord, n=5){
-  filter(coord, rep(1/n, n), sides=2)
+meanFilter <- function(coord, n=3){
+  as.vector(filter(coord, rep(1/n, n), sides=2))
 }
 
 
@@ -22,6 +22,19 @@ meanFilter <- function(coord, n=5){
 #' @export
 #'
 
-medianFilter <- function(coord, n=5){
-  runmed(coord, n)
+medianFilter <- function(coord, n=3){
+  as.vector(runmed(coord, n))
+}
+
+applyFilter <- function(dt, filter = c("mean", "median"), n = 3){
+  switch(filter,
+         "mean" = {
+           dt[, lon := fcoalesce(meanFilter(true_lon, n), true_lon)]
+           dt[, lat := fcoalesce(meanFilter(true_lat, n), true_lat)]
+         },
+         "median"= {
+           dt[, lon := fcoalesce(medianFilter(true_lon, n), true_lon)]
+           dt[, lat := fcoalesce(medianFilter(true_lat, n), true_lat)]
+         }
+  )
 }

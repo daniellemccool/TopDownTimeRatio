@@ -4,7 +4,7 @@
 \alias{medianFilter}
 \title{Median filter}
 \usage{
-medianFilter(coord, n = 5)
+medianFilter(coord, n = 3)
 }
 \arguments{
 \item{coord}{A vector of coordinates over which to apply a mean filter}

@@ -10,7 +10,8 @@ tdtr(
     "lon"),
   max_segs = 5000,
   n_segs = max_segs,
-  max_error = 200
+  max_error = 200,
+  add_iterations = FALSE
 )
 }
 \arguments{
@@ -23,6 +24,8 @@ tdtr(
 \item{n_segs}{used to generate a specific number of segments}
 
 \item{max_error}{used as stopping criteria}
+
+\item{add_iterations}{Add iterations to previous \code{tdtr} run}
 }
 \value{
 data.table with segment information

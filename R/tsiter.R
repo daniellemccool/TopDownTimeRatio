@@ -106,6 +106,7 @@ iterate <- function(data) {
 #' @param max_segs with maximum number of segments allowed default 5000
 #' @param n_segs used to generate a specific number of segments
 #' @param max_error used as stopping criteria
+#' @param add_iterations Add iterations to previous \code{tdtr} run
 #' @return data.table with segment information
 #' @export
 
@@ -115,15 +116,20 @@ tdtr <- function(data,
                                   longitude_col = "lon"),
                  max_segs = 5000,
                  n_segs = max_segs,
-                 max_error = 200){
-    setDT(data)
-    setnames(data, col_names$timestamp_col, "timestamp")
-    setnames(data, col_names$latitude_col, "lat")
-    setnames(data, col_names$longitude_col, "lon")
+                 max_error = 200,
+                 add_iterations = FALSE){
+    if (add_iterations == FALSE){
+        setDT(data)
+        setnames(data, col_names$timestamp_col, "timestamp")
+        setnames(data, col_names$latitude_col, "lat")
+        setnames(data, col_names$longitude_col, "lon")
 
-    setup(data)
+        setup(data)
 
-    i <- 1
+        i <- 1
+    } else if(add_iterations == TRUE){
+        i <- data[, segment_id[.N]]
+    }
     while(max(data$dist) > max_error & (i < max_segs) & (i < n_segs)){
         iterate(data)
         i <- i + 1
