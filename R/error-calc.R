@@ -2,7 +2,8 @@
 #'
 #' \code{singleSegmentSynchError} solves for the average distance with respect
 #' to time between the approximated segment returned by the top-down time ratio
-#' algorithm and the 'true' segment formed by two adjacent recorded points.
+#' algorithm and the 'true' segment formed by two adjacent recorded points. This
+#' is currently in development.
 #'
 #'
 #'
@@ -10,7 +11,6 @@
 #' @param res Segmented results from \code{tdtr}
 #' @param tol Tolerance for zero comparisons. May vary with time scale.
 #' @return Adds by reference a column with segment error as given in Meratnia & de By \(2004\)
-#' @export
 
 singleSegmentSynchError <- function(res, tol = 1e-24){
 

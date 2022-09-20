@@ -7,6 +7,7 @@ NULL
 #' @param data A data.frame or data.table containing lat, lon and timestamp
 #' @return A data.table with numeric timestamp, and an initial segment
 #' @export
+#' @keyword Internal
 #' @importFrom geodist geodist_vec
 
 setup <- function(data){
@@ -101,7 +102,6 @@ setup <- function(data){
 #' @param data data.table that has been setup by \code{setup}
 #' @param max_error stopping criteria from \code{tdtr}
 #' @return NULL
-#' @export
 
 iterate <- function(data, max_error){
   # Make new segments at biggest distance

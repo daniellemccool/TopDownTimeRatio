@@ -3,12 +3,16 @@ Type: Package
 Title: Top-Down Time Ratio segmentation for coordinate trajectories
 Version: 0.1.0
 Authors@R: person("Danielle", "McCool", email = "d.m.mccool@uu.nl",
-    role = c("aut", "cre"))
+    role = c("aut", "cre"), comment = c(ORCID = "0000-0002-7055-7539"))
 Description: This package applies the compression technique specified in 
-    Meratnia and de By (2004) on timestamped coordinate trajectories. This is an
-    improvement on the well-known Douglas-Peucker algorithm for segmentation 
-    that operates not on the basis of perpendicular distances, but instead
-    distances with respect to time.
+    Meratnia and de By (2004) <doi:10.1007/978-3-540-24741-8> on timestamped
+    coordinate trajectories. This is an improvement on the well-known
+    Douglas-Peucker algorithm for segmentation that operates not on the basis of
+    perpendicular distances, but instead distances with respect to time.
+    Provided a trajectory with timestamps, tdtr() returns a set of straight-
+    line segments that can represent the full trajectory. McCool, Lugtig,
+    and Schouten (2022) <doi:10.1007/s11116-022-10328-2> describe this method as
+    implemented here in more detail. 
 License: GPL-2
 Encoding: UTF-8
 LazyData: true

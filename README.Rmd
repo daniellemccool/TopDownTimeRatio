@@ -13,6 +13,21 @@ references:
   issued: 
     year: 2004
   publisher: Springer
+- id: McCool2022-yo,
+  title: Maximum interpolable gap length in missing smartphone-based GPS mobility data
+  author: 
+  - family: McCool
+    given: Danielle
+  - family: Lugtig
+    given: Peter
+  - family: Schouten
+    given: Barry
+  journal: Transportation
+  publisher: Springer
+  year: 2022
+  doi: 10.1007/s11116-022-10328-2
+}
+
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -31,11 +46,11 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of topdowntimeratio is to condense sequences of longitudinal GPS data into segments for ease of processing. The method used in this package is as outlined in @meratnia2004spatiotemporal. 
+The goal of topdowntimeratio is to condense sequences of longitudinal GPS data into segments for ease of processing. This package was developed based on the method outlined in @meratnia2004spatiotemporal, and as implemented in @McCool2022-yo.
 
 ## Installation
 
-When it's released (it isn't yet), you can install the released version of TopDownTimeRatio from [CRAN](https://CRAN.R-project.org) with:
+When it's released (it isn't yet), you can install the released version of topdowntimeratio from [CRAN](https://CRAN.R-project.org) with:
 
 ``` r
 install.packages("topdowntimeratio")
@@ -49,17 +64,18 @@ devtools::install_github("daniellemccool/topdowntimeratio")
 ```
 ## Example
 
-Basic usage requires that your data has at least longitude and latitude coordinates as well as a timestamp. You can provide the names if they differ from lon, lat and timestamp.
+Basic usage requires that your data has at least longitude and latitude coordinates as well as a timestamp and an id column. You can provide the names if they differ from entity_id, lon, lat and timestamp.
 
 Here we generate a single segment
 
 ```{r example}
 library(topdowntimeratio)
-df <- data.frame(lon = c(5, 5.01, 5.02, 5.05),
+df <- data.frame(entity_id = c(1, 1, 1, 1),
+                 lon = c(5, 5.01, 5.02, 5.05),
                  lat = c(32.01, 32.04, 32.06, 32.10),
                  timestamp = c(500, 600, 800, 2000))
 
-res <- tdtr(df, n_segs = 1)
+res <- tdtr(df, n_segs = 1, group_col = NULL)
 
 print(res)
 ```
@@ -74,7 +90,7 @@ segments(res$seg_start_lon, res$seg_start_lat, res$seg_end_lon, res$seg_end_lat)
 
 Plot example, new segment at greatest distance
 ```{r plot2, echo = FALSE}
-res <- tdtr(df, n_segs = 2)
+res <- tdtr(df, n_segs = 2, group_col = NULL)
 plot(res$lon, res$lat)
 segments(res$seg_start_lon, res$seg_start_lat, res$seg_end_lon, res$seg_end_lat)
 ```
