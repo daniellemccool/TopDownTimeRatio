@@ -6,8 +6,9 @@
 \usage{
 tdtr(
   data,
-  col_names = list(timestamp_col = "timestamp", latitude_col = "lat", longitude_col =
-    "lon"),
+  col_names = list(entity_id_col = "entity_id", timestamp_col = "timestamp", latitude_col
+    = "lat", longitude_col = "lon"),
+  group_col = "state_id",
   max_segs = 5000,
   n_segs = max_segs,
   max_error = 200,
@@ -17,13 +18,15 @@ tdtr(
 \arguments{
 \item{data}{is a data.frame or data.table with timestamp, lat and lon}
 
-\item{col_names}{named list with column names for timestamp, lat and lon}
+\item{col_names}{named list with existing column names for timestamp, latitude and longitude column (these are changed to 'timestamp', 'lat' and 'lon' respectively)}
 
-\item{max_segs}{with maximum number of segments allowed default 5000}
+\item{group_col}{NULL for no grouping, or string column name representing a grouping in the data where initial segments will be drawn.}
+
+\item{max_segs}{with maximum number of segments allowed, default is  5000}
 
 \item{n_segs}{used to generate a specific number of segments}
 
-\item{max_error}{used as stopping criteria}
+\item{max_error}{used as stopping criteria, default is 200}
 
 \item{add_iterations}{Add iterations to previous \code{tdtr} run}
 }

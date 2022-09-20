@@ -2,28 +2,30 @@ library(topdowntimeratio)
 library(testthat)
 library(data.table)
 
-df <- data.frame(lon = c(5, 5.01, 5.02, 5.05),
-                       lat = c(32.01, 32.04, 32.06, 32.10),
-                       timestamp = c(500, 600, 800, 2000))
-
+df <- data.frame(
+  entity_id = c(1, 1, 1, 1),
+  lon = c(5, 5.01, 5.02, 5.05),
+  lat = c(32.01, 32.04, 32.06, 32.10),
+  timestamp = c(500, 600, 800, 2000)
+  )
 
 test_that("segments returns correct number of segments", {
-  segs <- getSegments(tdtr(df, n_segs = 1))
+  segs <- getSegments(tdtr(df, n_segs = 1, group_col = NULL))
   expect_equal(nrow(segs), 1)
 
-  segs <- getSegments(tdtr(df, n_segs = 2))
+  segs <- getSegments(tdtr(df, n_segs = 2, group_col = NULL))
   expect_equal(nrow(segs), 2)
 })
 
 test_that("segment distance is correct", {
-  segs <- getSegments(tdtr(df, n_segs = 2))
+  segs <- getSegments(tdtr(df, n_segs = 2, group_col = NULL))
   start.one <- df[1, c("lon", "lat")]
   end.one <- df[3, c("lon", "lat")]
-  dist.one <- geodist::geodist(start.one, end.one, paired = TRUE, measure = "geodesic")
+  dist.one <- geodist::geodist(start.one, end.one, paired = TRUE, measure = "haversine")
 
   start.two <- df[3, c("lon", "lat")]
   end.two <- df[4, c("lon", "lat") ]
-  dist.two <- geodist::geodist(start.two, end.two, paired = TRUE, measure = "geodesic")
+  dist.two <- geodist::geodist(start.two, end.two, paired = TRUE, measure = "haversine")
 
   expect_equal(segs$segdist, c(dist.one, dist.two))
   })

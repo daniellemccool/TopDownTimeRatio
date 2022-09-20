@@ -9,138 +9,235 @@ NULL
 #' @export
 #' @importFrom geodist geodist_vec
 
-setup <- function(data) {
+setup <- function(data){
+  stopifnot(is.data.table(data))
 
-    data[, `:=`(timestamp_numeric, as.numeric(timestamp))]
-    set(data, j = c("segment_start", "segment_end"), value = FALSE)
-    data[1, `:=`(segment_start, TRUE)]
-    data[nrow(data), `:=`(segment_end, TRUE)]
-    data[, `:=`(c("adjusted_lat", "adjusted_lon"), .(lat, lon))]
-    data[, `:=`(segment_id, cumsum(segment_start))]
-    setkey(data, segment_id)
+  setorder(data, timestamp)
+  data <- unique(data, by = c("entity_id",
+                              "lon",
+                              "lat",
+                              "timestamp"))
 
-    segstarts <- data[, .I[1], segment_id]$V1
-    data[data[segstarts], `:=`(seg_start_lat = i.lat, seg_start_lon = i.lon, seg_start_time = i.timestamp_numeric)]
+  # Initiates necessary columns
+  set(data,
+      j = c("timestamp_numeric",
+            "segment_start",
+            "segment_end",
+            "adjusted_lat",
+            "adjusted_lon",
+            "segment_id"),
+      value = list(
+        as.numeric(data[["timestamp"]]),
+        FALSE,
+        FALSE,
+        data[["lat"]],
+        data[["lon"]],
+        1L
+      ))
 
-    segends <- data[, .I[.N], segment_id]$V1
-    data[data[segends], `:=`(seg_end_lat = i.lat, seg_end_lon = i.lon, seg_end_time = i.timestamp_numeric)]
+  # Sets first and last row to be segment starts and ends
+  set(data,
+      i = 1L,
+      j = "segment_start",
+      value = TRUE)
+  set(data,
+      i = nrow(data),
+      j = "segment_end",
+      value = TRUE)
 
-    data[, `:=`(seg_dur = seg_end_time - seg_start_time, seg_dist_lat = seg_end_lat - seg_start_lat,
-                seg_dist_lon = seg_end_lon - seg_start_lon)]
+  ## Moved to initial block 20-09-2022
+  # set(data,
+  #     j = c("adjusted_lat",
+  #           "adjustd_lon",
+  #           "segment_id"),
+  #     value = list(
+  #       data[["lat"]],
+  #       data[["lon"]],
+  #       1L
+  #     ))
 
-    data[, `:=`(perc_of_seg_dur, (timestamp_numeric - seg_start_time)/seg_dur)]
+
+  data[, `:=`(seg_start_lat = lat[1L], seg_start_lon = lon[1L],
+              seg_start_time = timestamp_numeric[1L],
+              seg_end_lat = lat[.N], seg_end_lon = lon[.N],
+              seg_end_time = timestamp_numeric[.N]), segment_id]
 
 
-    data[!(segment_start | segment_end), `:=`(adjusted_lat = seg_start_lat + (perc_of_seg_dur *
-                                                                                  seg_dist_lat), adjusted_lon = seg_start_lon + (perc_of_seg_dur * seg_dist_lon))]
+  set(data,
+      j = c("seg_dur",
+            "seg_dist_lat",
+            "seg_dist_lon"),
+      value = list(data[["seg_end_time"]] - data[["seg_start_time"]],
+                   data[["seg_end_lat"]] - data[["seg_start_lat"]],
+                   data[["seg_end_lon"]] - data[["seg_start_lon"]]))
+  set(data,
+      j = "perc_of_seg_dur",
+      value = (data[["timestamp_numeric"]] - data[["seg_start_time"]])/data[["seg_dur"]])
 
-    # data[, `:=`(dist, geodist::geodist(x = data.table(lon, lat), y = data.table(longitude = adjusted_lon,
-    #                                                                    latitude = adjusted_lat), paired = TRUE))]
+  segends <- data[["segment_end"]] & data[["segment_start"]]
+  condition <- which(!segends)
+  perc <- data[["perc_of_seg_dur"]][condition]
 
-    data[, dist := geodist::geodist_vec(x1 = lon, y1 = lat, x2 = adjusted_lon, y2 = adjusted_lat, paired = TRUE)]
+  set(data,
+      i = condition,
+      j = c("adjusted_lat", "adjusted_lon"),
+      value = list(data[["seg_start_lat"]][condition] + (perc * data[["seg_dist_lat"]][condition]),
+                   data[["seg_start_lon"]][condition] + (perc * data[["seg_dist_lon"]][condition])))
+
+
+  set(data,
+      j = "dist",
+      value = list(
+        geodist(cbind(lon = data[["lon"]], lat = data[["lat"]]),
+                cbind(lon = data[["adjusted_lon"]], lat = data[["adjusted_lat"]]),
+                paired = TRUE, measure = "haversine")))
+  data[]
 }
 
-#' Perform one iteration of segmentation
+
+#' Perform one iteration of segmentation. Updates by reference and
+#' should be an internal function.
 #'
 #' @param data data.table that has been setup by \code{setup}
-#' @return data.table with one additional segment and error distance
+#' @param max_error stopping criteria from \code{tdtr}
+#' @return NULL
 #' @export
 
+iterate <- function(data, max_error){
+  # Make new segments at biggest distance
+  data[data[dist > max_error, .I[which.max(dist)], by = segment_id]$V1,
+       `:=`(segment_start = TRUE,
+            segment_end = TRUE)]
 
-iterate <- function(data) {
-    data[dist == max(dist), `:=`(segment_start = TRUE, segment_end = TRUE, adjusted_lon = lon, adjusted_lat = lat)]
-
-    data[, `:=`(segment_id, cumsum(segment_start))]
-    data[, `:=`(seg_end_id, shift(segment_id, fill = 1))]
-
-    setorder(data, timestamp_numeric)
-
-
-    data[, `:=`(seg_start_lat = lat[1],
-                seg_start_lon = lon[1],
-                seg_start_time = timestamp_numeric[1]),
-         segment_id]
-
-
-    data[, `:=`(seg_end_lat = lat[.N],
-                seg_end_lon = lon[.N],
-                seg_end_time = timestamp_numeric[.N]),
-         seg_end_id]
-
-    data[, temp.seg_end_lat := shift(seg_end_lat, -1)]
-    data[, temp.seg_end_lon := shift(seg_end_lon, -1)]
-    data[, temp.seg_end_ts := shift(seg_end_time, -1)]
-
-    data[segment_end == TRUE & segment_start == TRUE,
-         `:=`(seg_end_lat = temp.seg_end_lat,
-              seg_end_lon = temp.seg_end_lon,
-              seg_end_time = temp.seg_end_ts)]
-
-
-    data[, `:=`(temp.seg_end_lat = NULL,
-                temp.seg_end_lon = NULL,
-                temp.seg_end_ts = NULL)]
-
-    data[, `:=`(seg_dur = seg_end_time - seg_start_time, seg_dist_lat = seg_end_lat - seg_start_lat,
-        seg_dist_lon = seg_end_lon - seg_start_lon)]
-
-    data[, `:=`(perc_of_seg_dur, (timestamp_numeric - seg_start_time)/seg_dur)]
-
-
-    data[!(segment_start | segment_end), `:=`(adjusted_lat = seg_start_lat + (perc_of_seg_dur *
-        seg_dist_lat), adjusted_lon = seg_start_lon + (perc_of_seg_dur * seg_dist_lon))]
-
-
-
-    # data[, `:=`(dist, geodist::geodist(x = data.table(lon, lat), y = data.table(longitude = adjusted_lon,
-    #     latitude = adjusted_lat), paired = TRUE))]
-
-    data[, dist := geodist::geodist_vec(x1 = lon, y1 = lat, x2 = adjusted_lon, y2 = adjusted_lat, paired = TRUE)]
-
-    data[, `:=`(segment_id, cumsum(segment_start))]
-    data[, `:=`(seg_end_id, shift(segment_id, fill = 1))]
+  updateSegs(data)
+  set(data,
+      j = "segment_id",
+      value = cumsum(data[["segment_start"]]))
+  set(data,
+      j = "seg_end_id",
+      value = shift(data[["segment_id"]], fill = 1L))
+  return(NULL)
 }
 
+
+controlLoop <- function(data, i, max_error, max_segs, n_segs){
+  if (nrow(data) < 2){
+    return()
+  }
+  data <- setup(data)
+
+  while (data[, max(dist)] > max_error &&
+         (i < max_segs) &&
+         (i < n_segs)) {
+    iterate(data, max_error = max_error)
+    i <- i + 1
+  }
+
+  data
+}
+
+updateSegs <- function(data){
+  lat <- .subset2(data, "lat")
+  lon <- .subset2(data, "lon")
+  tsn <- .subset2(data, "timestamp_numeric")
+  starts <- data[(segment_start), which = TRUE]
+  ends <- data[(segment_end), which = TRUE]
+  Ncond <- length(starts)
+  reptimes <- ends - starts
+  reptimes[Ncond] <- reptimes[Ncond] + 1
+  segstartlat <- rep(lat[starts], times = reptimes)
+  segstartlon <- rep(lon[starts], times = reptimes)
+  segst <- rep(tsn[starts], times = reptimes)
+  segendlat <- rep(lat[ends], times = reptimes)
+  segendlon <- rep(lon[ends], times = reptimes)
+  seget <- rep(tsn[ends], times = reptimes)
+  segdistlat <- segendlat - segstartlat
+  segdistlon <- segendlon - segstartlon
+  segdur <- seget - segst
+  perc <- (tsn - segst)/segdur;
+
+  adjlon <- segstartlon + perc * segdistlon;
+  adjlat <- segstartlat + perc * segdistlat;
+  newdist <- geodist_vec(lon, lat, adjlon, adjlat, paired = TRUE, measure = "haversine");
+  newdist[is.nan(newdist)] <- 0
+  set(data,
+      j = c("dist",
+            "seg_start_lat",
+            "seg_start_lon",
+            "seg_end_lat",
+            "seg_end_lon",
+            "seg_start_time",
+            "seg_end_time",
+            "adjusted_lon",
+            "adjusted_lat",
+            "seg_dur",
+            "perc_of_seg_dur"),
+      value = list(
+        newdist,
+        segstartlat,
+        segstartlon,
+        segendlat,
+        segendlon,
+        segst,
+        seget,
+        adjlon,
+        adjlat,
+        segdur,
+        perc
+      ))
+}
 
 #' Perform Top-Down Time Ratio segmentation
 #'
 #' @param data is a data.frame or data.table with timestamp, lat and lon
-#' @param col_names named list with column names for timestamp, lat and lon
-#' @param max_segs with maximum number of segments allowed default 5000
+#' @param col_names named list with existing column names for timestamp, latitude and longitude column (these are changed to 'timestamp', 'lat' and 'lon' respectively)
+#' @param group_col NULL for no grouping, or string column name representing a grouping in the data where initial segments will be drawn.
+#' @param max_segs with maximum number of segments allowed, default is  5000
 #' @param n_segs used to generate a specific number of segments
-#' @param max_error used as stopping criteria
+#' @param max_error used as stopping criteria, default is 200
 #' @param add_iterations Add iterations to previous \code{tdtr} run
 #' @return data.table with segment information
 #' @export
 
 tdtr <- function(data,
-                 col_names = list(timestamp_col = "timestamp",
+                 col_names = list(entity_id_col = "entity_id",
+                                  timestamp_col = "timestamp",
                                   latitude_col = "lat",
                                   longitude_col = "lon"),
+                 group_col = "state_id",
                  max_segs = 5000,
                  n_segs = max_segs,
                  max_error = 200,
                  add_iterations = FALSE){
-    if (add_iterations == FALSE){
-        setDT(data)
-        setnames(data, col_names$timestamp_col, "timestamp")
-        setnames(data, col_names$latitude_col, "lat")
-        setnames(data, col_names$longitude_col, "lon")
 
-        setup(data)
+  stopifnot(col_names %in% names(data)) # new 20-09-2022
 
-        i <- 1
-    } else if(add_iterations == TRUE){
-        i <- data[, segment_id[.N]]
+  if (add_iterations == FALSE) {
+    setDT(data)
+    setnames(data, col_names$entity_id_col, "entity_id")
+    setnames(data, col_names$timestamp_col, "timestamp")
+    setnames(data, col_names$latitude_col, "lat")
+    setnames(data, col_names$longitude_col, "lon")
+
+    i <- 1
+
+    if (!is.null(group_col)) {
+      stopifnot(group_col %in% names(data))
+      setnames(data, group_col, "group")
+
+      data <- split(data, data$group, drop = TRUE) %>%
+        lapply(controlLoop, i = i, max_error = max_error, max_segs = max_segs, n_segs = n_segs) %>%
+        rbindlist(idcol = TRUE, fill = TRUE)
+
+    } else {
+      data <- controlLoop(data, i, max_error, max_segs, n_segs)
     }
-    while(max(data$dist) > max_error & (i < max_segs) & (i < n_segs)){
-        iterate(data)
-        i <- i + 1
-    }
+  }
+  else if (add_iterations == TRUE) {
+    i <- data[, segment_id[.N]]
+    data <- controlLoop(data, i, max_error, max_segs, n_segs)
 
-    data[]
+  }
+  data[]
 }
 
-
-# data <- setup(data) data <- iterate(data) i <- 1 while(max(data$dist) > 200 & i < 2000){ data <-
-# iterate(data) i <- i + 1 print(i) }

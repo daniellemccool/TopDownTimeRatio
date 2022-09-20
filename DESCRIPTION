@@ -13,9 +13,9 @@ License: GPL-2
 Encoding: UTF-8
 LazyData: true
 Imports:
-    data.table,
+    data.table (>= 1.9.8),
     geodist (>= 0.0.4)
-Depends: R (>= 3.6.0)
-RoxygenNote: 7.1.0
+Depends: R (>= 4.1)
+RoxygenNote: 7.2.1
 Suggests: 
     testthat

@@ -2,16 +2,17 @@
 % Please edit documentation in R/tsiter.R
 \name{iterate}
 \alias{iterate}
-\title{Perform one iteration of segmentation}
+\title{Perform one iteration of segmentation. Updates by reference and
+should be an internal function.}
 \usage{
-iterate(data)
+iterate(data, max_error)
 }
 \arguments{
 \item{data}{data.table that has been setup by \code{setup}}
-}
-\value{
-data.table with one additional segment and error distance
+
+\item{max_error}{stopping criteria from \code{tdtr}}
 }
 \description{
-Perform one iteration of segmentation
+Perform one iteration of segmentation. Updates by reference and
+should be an internal function.
 }
