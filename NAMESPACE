@@ -2,11 +2,9 @@
 
 export(getSegments)
 export(getSegsExtra)
-export(iterate)
 export(meanFilter)
 export(medianFilter)
 export(setup)
-export(singleSegmentSynchError)
 export(tdtr)
 import(data.table)
 importFrom(geodist,geodist)

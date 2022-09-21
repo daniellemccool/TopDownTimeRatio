@@ -1,33 +1,6 @@
 ---
 output: github_document
-references:
-- id: meratnia2004spatiotemporal
-  title: Spatiotemporal compression techniques for moving point objects
-  author: 
-  - family: Meratnia
-    given: Nirvana
-  - family: Rolf
-    given: A
-  container-title: International Conference on Extending Database Technology
-  page: 765--782
-  issued: 
-    year: 2004
-  publisher: Springer
-- id: McCool2022-yo,
-  title: Maximum interpolable gap length in missing smartphone-based GPS mobility data
-  author: 
-  - family: McCool
-    given: Danielle
-  - family: Lugtig
-    given: Peter
-  - family: Schouten
-    given: Barry
-  journal: Transportation
-  publisher: Springer
-  year: 2022
-  doi: 10.1007/s11116-022-10328-2
-}
-
+bibliography: bibliography.bib
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -46,7 +19,8 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of topdowntimeratio is to condense sequences of longitudinal GPS data into segments for ease of processing. This package was developed based on the method outlined in @meratnia2004spatiotemporal, and as implemented in @McCool2022-yo.
+The goal of topdowntimeratio is to condense sequences of longitudinal GPS data into segments for ease of processing. This package was developed based on the method outlined in @Meratnia2004-mv, and as implemented in @McCool2022-yo.
+
 
 ## Installation
 
@@ -62,6 +36,7 @@ And the development version from [GitHub](https://github.com/) with:
 # install.packages("devtools")
 devtools::install_github("daniellemccool/topdowntimeratio")
 ```
+
 ## Example
 
 Basic usage requires that your data has at least longitude and latitude coordinates as well as a timestamp and an id column. You can provide the names if they differ from entity_id, lon, lat and timestamp.
@@ -94,4 +69,5 @@ res <- tdtr(df, n_segs = 2, group_col = NULL)
 plot(res$lon, res$lat)
 segments(res$seg_start_lon, res$seg_start_lat, res$seg_end_lon, res$seg_end_lat)
 ```
+
 

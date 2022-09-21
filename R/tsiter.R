@@ -7,7 +7,6 @@ NULL
 #' @param data A data.frame or data.table containing lat, lon and timestamp
 #' @return A data.table with numeric timestamp, and an initial segment
 #' @export
-#' @keyword Internal
 #' @importFrom geodist geodist_vec
 
 setup <- function(data){

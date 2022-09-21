@@ -17,5 +17,6 @@ Adds by reference a column with segment error as given in Meratnia & de By \(200
 \description{
 \code{singleSegmentSynchError} solves for the average distance with respect
 to time between the approximated segment returned by the top-down time ratio
-algorithm and the 'true' segment formed by two adjacent recorded points.
+algorithm and the 'true' segment formed by two adjacent recorded points. This
+is currently in development.
 }
