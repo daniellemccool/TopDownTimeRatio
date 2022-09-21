@@ -37,7 +37,7 @@ splitDiffTime <- function(timestamp){
 #'
 #' @param lat_col Time-ordered vector of latitudes
 #' @param lon_col Time-ordered vector of longitudes
-#' @param timestamp Timestamps associatd with the latitude/longitude pairs
+#' @param timestamp Timestamps associated with the latitude/longitude pairs
 #' @param dist_measure Passed through to geodist::geodist_vec, One of
 #' "haversine" "vincenty", "geodesic", or "cheap" specifying desired method of
 #' geodesic distance calculation.
