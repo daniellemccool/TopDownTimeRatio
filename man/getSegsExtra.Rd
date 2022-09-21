@@ -2,7 +2,7 @@
 % Please edit documentation in R/segments.R
 \name{getSegsExtra}
 \alias{getSegsExtra}
-\title{Extract segment info with extra information from the segmented data.table}
+\title{Get Segments with calculated data}
 \usage{
 getSegsExtra(
   data,
@@ -18,8 +18,29 @@ getSegsExtra(
 \item{group}{Separate by group, default is FALSE}
 }
 \value{
-data.table with segments only
+data.table of segments, annotated with segment-level information on
+  distance, mean and variance of immediate bearing difference, total bearing
+  variance over the segment, mean, maximum and variance of calculated speed
+  in meters per second, percentage of zero-speed entries, whether the segment
+  consists of fewer than 3 locations, and the time-weighted radius of
+  gyration.
 }
 \description{
-Extract segment info with extra information from the segmented data.table
+This function calculates various segment-level metrics that require the raw
+data before returning a data.table with the segments and the calculated
+results. Calculates speed, bearing and radius of gyration information.
+}
+\examples{
+df <- data.frame(entity_id = rep(1, 12),
+   timestamp = c(1, 2, 4, 10, 14, 18, 20, 21, 24, 25, 28, 29),
+   lon = c(5.1299311, 5.129979, 5.129597, 5.130028, 5.130555, 5.131083,
+           5.132101, 5.132704, 5.133326, 5.133904, 5.134746, 5.135613),
+   lat = c(52.092839, 52.092827, 52.092571, 52.092292, 52.092076, 52.091821,
+           52.091420, 52.091219, 52.091343, 52.091651, 52.092138, 52.092698))
+# First generate segments
+res100 <- tdtr(df,
+     group_col = NULL,
+     max_error = 100)
+# Then extract a data.table of segments
+getSegsExtra(res100)
 }

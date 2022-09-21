@@ -20,3 +20,4 @@ to time between the approximated segment returned by the top-down time ratio
 algorithm and the 'true' segment formed by two adjacent recorded points. This
 is currently in development.
 }
+\keyword{internal}

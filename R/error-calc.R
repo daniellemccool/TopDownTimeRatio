@@ -11,6 +11,7 @@
 #' @param res Segmented results from \code{tdtr}
 #' @param tol Tolerance for zero comparisons. May vary with time scale.
 #' @return Adds by reference a column with segment error as given in Meratnia & de By \(2004\)
+#' @keywords internal
 
 singleSegmentSynchError <- function(res, tol = 1e-24){
 
