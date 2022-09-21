@@ -27,6 +27,7 @@ medianFilter <- function(coord, n=3){
 }
 
 applyFilter <- function(dt, filter = c("mean", "median"), n = 3){
+  lon = true_lon = lat = true_lat = NULL # Fix 'no visible vinding for global variable' https://github.com/Rdatatable/data.table/issues/850#issuecomment-259466153
   switch(filter,
          "mean" = {
            dt[, lon := fcoalesce(meanFilter(true_lon, n), true_lon)]

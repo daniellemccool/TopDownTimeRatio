@@ -18,9 +18,12 @@ tdtr(
 \arguments{
 \item{data}{is a data.frame or data.table with timestamp, lat and lon}
 
-\item{col_names}{named list with existing column names for timestamp, latitude and longitude column (these are changed to 'timestamp', 'lat' and 'lon' respectively)}
+\item{col_names}{named list with existing column names for timestamp,
+latitude and longitude column (these are changed to 'timestamp', 'lat' and
+'lon' respectively)}
 
-\item{group_col}{NULL for no grouping, or string column name representing a grouping in the data where initial segments will be drawn.}
+\item{group_col}{NULL for no grouping, or string column name representing a
+grouping in the data where initial segments will be drawn.}
 
 \item{max_segs}{with maximum number of segments allowed, default is  5000}
 
@@ -35,4 +38,33 @@ data.table with segment information
 }
 \description{
 Perform Top-Down Time Ratio segmentation
+}
+\examples{
+df <- data.frame(person = rep(1, 12),
+   time = c(1, 2, 4, 10, 14, 18, 20, 21, 24, 25, 28, 29),
+   longitude = c(5.1299311, 5.129979, 5.129597, 5.130028, 5.130555, 5.131083,
+           5.132101, 5.132704, 5.133326, 5.133904, 5.134746, 5.135613),
+   lat = c(52.092839, 52.092827, 52.092571, 52.092292, 52.092076, 52.091821,
+           52.091420, 52.091219, 52.091343, 52.091651, 52.092138, 52.092698))
+# Generate segments under a max error of 100m
+res100 <- tdtr(df,
+     col_names = list(entity_id_col = "person",
+                      timestamp_col = "time",
+                      latitude_col = "lat",
+                      longitude_col = "longitude"),
+     group_col = NULL,
+     max_error = 100)
+# Generate segments under a max error of 30m
+res30 <- tdtr(df,
+     col_names = list(entity_id_col = "person",
+                      timestamp_col = "time",
+                      latitude_col = "lat",
+                      longitude_col = "longitude"),
+     group_col = NULL,
+     max_error = 30)
+plot(df$lon, df$lat)
+segments(res100$seg_start_lon, res100$seg_start_lat,
+         res100$seg_end_lon, res100$seg_end_lat, col = "blue")
+segments(res30$seg_start_lon, res30$seg_start_lat,
+         res30$seg_end_lon, res30$seg_end_lat, col = "red")
 }

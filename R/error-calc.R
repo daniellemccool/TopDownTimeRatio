@@ -14,6 +14,12 @@
 
 singleSegmentSynchError <- function(res, tol = 1e-24){
 
+  # Fix 'no visible vinding for global variable' https://github.com/Rdatatable/data.table/issues/850#issuecomment-259466153
+  lat1 = lat = lon1 = lon = lat2 = lon2 = t1 = timestamp_numeric = t2 = alat1 =
+    adjusted_lat = alon1 = adjusted_lon = alat2 = alon2 = dx1 = dy1 = dx2 =
+    dy2 = c1 = c2 = c3 = c4 = discr = case = segment_err = t1distforint =
+    t2distforint = t1int = t2int = NULL
+
   res[, `:=`(lat1, lat)]
   res[, `:=`(lon1, lon)]
   res[, `:=`(lat2, shift(lat, -1))]

@@ -1,16 +1,24 @@
 #' @import data.table
-#' @importFrom geodist geodist
-NULL
+
+# Fix 'no visible vinding for global variable'
+# https://github.com/Rdatatable/data.table/issues/850#issuecomment-259466153
+# Variables are defined as NULL locally where possible, but for iterate and
+# updateSegs, which need to be efficient, we include them as global Vars.
+utils::globalVariables(names = c("segment_id", "segment_start", "segment_end"))
 
 #' Set up a data.table for iterative segmentation
 #'
 #' @param data A data.frame or data.table containing lat, lon and timestamp
 #' @return A data.table with numeric timestamp, and an initial segment
 #' @export
-#' @importFrom geodist geodist_vec
+#' @importFrom geodist geodist geodist_vec
 
 setup <- function(data){
   stopifnot(is.data.table(data))
+
+  # Fix 'no visible vinding for global variable'
+  # https://github.com/Rdatatable/data.table/issues/850#issuecomment-259466153
+  timestamp = lat = lon = timestamp_numeric = segment_id = NULL
 
   setorder(data, timestamp)
   data <- unique(data, by = c("entity_id",
@@ -189,15 +197,45 @@ updateSegs <- function(data){
 #' Perform Top-Down Time Ratio segmentation
 #'
 #' @param data is a data.frame or data.table with timestamp, lat and lon
-#' @param col_names named list with existing column names for timestamp, latitude and longitude column (these are changed to 'timestamp', 'lat' and 'lon' respectively)
-#' @param group_col NULL for no grouping, or string column name representing a grouping in the data where initial segments will be drawn.
+#' @param col_names named list with existing column names for timestamp,
+#'   latitude and longitude column (these are changed to 'timestamp', 'lat' and
+#'   'lon' respectively)
+#' @param group_col NULL for no grouping, or string column name representing a
+#'   grouping in the data where initial segments will be drawn.
 #' @param max_segs with maximum number of segments allowed, default is  5000
 #' @param n_segs used to generate a specific number of segments
 #' @param max_error used as stopping criteria, default is 200
 #' @param add_iterations Add iterations to previous \code{tdtr} run
 #' @return data.table with segment information
 #' @export
-
+#' @examples
+#' df <- data.frame(person = rep(1, 12),
+#'    time = c(1, 2, 4, 10, 14, 18, 20, 21, 24, 25, 28, 29),
+#'    longitude = c(5.1299311, 5.129979, 5.129597, 5.130028, 5.130555, 5.131083,
+#'            5.132101, 5.132704, 5.133326, 5.133904, 5.134746, 5.135613),
+#'    lat = c(52.092839, 52.092827, 52.092571, 52.092292, 52.092076, 52.091821,
+#'            52.091420, 52.091219, 52.091343, 52.091651, 52.092138, 52.092698))
+#' # Generate segments under a max error of 100m
+#' res100 <- tdtr(df,
+#'      col_names = list(entity_id_col = "person",
+#'                       timestamp_col = "time",
+#'                       latitude_col = "lat",
+#'                       longitude_col = "longitude"),
+#'      group_col = NULL,
+#'      max_error = 100)
+#' # Generate segments under a max error of 30m
+#' res30 <- tdtr(df,
+#'      col_names = list(entity_id_col = "person",
+#'                       timestamp_col = "time",
+#'                       latitude_col = "lat",
+#'                       longitude_col = "longitude"),
+#'      group_col = NULL,
+#'      max_error = 30)
+#' plot(df$lon, df$lat)
+#' segments(res100$seg_start_lon, res100$seg_start_lat,
+#'          res100$seg_end_lon, res100$seg_end_lat, col = "blue")
+#' segments(res30$seg_start_lon, res30$seg_start_lat,
+#'          res30$seg_end_lon, res30$seg_end_lat, col = "red")
 tdtr <- function(data,
                  col_names = list(entity_id_col = "entity_id",
                                   timestamp_col = "timestamp",
