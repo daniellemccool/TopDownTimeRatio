@@ -19,8 +19,12 @@ LazyData: true
 Imports:
     data.table (>= 1.9.8),
     geodist (>= 0.0.4),
-    magrittr
+    lubridate,
+    magrittr,
+    mathjaxr,
+    stats
 Depends: R (>= 4.1)
+RdMacros: mathjaxr
 RoxygenNote: 7.2.1
 Suggests: 
     testthat

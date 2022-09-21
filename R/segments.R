@@ -77,7 +77,6 @@ convertCoordsToDist <- function(data, coord_cols){
 #' @param group Separate by group, default is FALSE
 #' @return data.table with segments only
 #' @export
-
 getSegsExtra <- function(data, coord.type = c("coordinate", "distance", "both"), group = FALSE){
   coord.type <- match.arg(coord.type, c("coordinate", "distance",
                                         "both"))
@@ -93,7 +92,7 @@ getSegsExtra <- function(data, coord.type = c("coordinate", "distance", "both"),
     avgpbdif = mean(pbdiff, na.rm = TRUE),
     varpbdif = var(pbdiff, na.rm = TRUE),
     rog      = radiusOfGyrationDT(lat, lon, timestamp),
-    bearvar  = circ.disp(rad(na.omit(bearing)))$var,
+    bearvar  = CircStats::circ.disp(CircStats::rad(na.omit(bearing)))$var,
     N2       = .N < 3
   ), segment_id]
 
