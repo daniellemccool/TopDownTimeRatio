@@ -9,7 +9,7 @@ df <- data.frame(
   timestamp = c(500, 600, 800, 2000)
   )
 
-test_that("segments returns correct number of segments", {
+test_that("getSegments returns correct number of segments", {
   segs <- getSegments(tdtr(df, n_segs = 1, group_col = NULL))
   expect_equal(nrow(segs), 1)
 
@@ -44,3 +44,10 @@ test_that("convertCoordsToDist returns correct colnames",{
 
 })
 
+test_that("getSegsExtra returns correct number of segments", {
+  segs <- getSegsExtra(tdtr(df, n_segs = 1, group_col = NULL))
+  expect_equal(nrow(segs), 1)
+
+  segs <- getSegsExtra(tdtr(df, n_segs = 2, group_col = NULL))
+  expect_equal(nrow(segs), 2)
+})

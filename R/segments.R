@@ -45,7 +45,7 @@ getSegments <- function(data, coord.type = c("coordinate", "distance", "both"), 
   # Fix 'no visible vinding for global variable'
   # https://github.com/Rdatatable/data.table/issues/850#issuecomment-259466153
   segment_start = seg_start_lon = seg_start_lat = seg_start_time = seg_end_lon =
-    seg_end_lat = seg_end_time = segdist = .id = entity_id = NULL
+    seg_end_lat = seg_end_time = segdist = .id = entity_id = id = NULL
 
   coord.type <- match.arg(coord.type, c("coordinate", "distance",
                                         "both"))
@@ -112,6 +112,8 @@ convertCoordsToDist <- function(data, coord_cols){
 #'   in meters per second, percentage of zero-speed entries, whether the segment
 #'   consists of fewer than 3 locations, and the time-weighted radius of
 #'   gyration.
+#' @importFrom geosphere bearing
+#' @importFrom CircStats circ.disp rad
 #' @export
 #' @examples
 #' df <- data.frame(entity_id = rep(1, 12),
@@ -133,8 +135,10 @@ getSegsExtra <- function(data, coord.type = c("coordinate", "distance", "both"),
 
   # Fix 'no visible vinding for global variable' https://github.com/Rdatatable/data.table/issues/850#issuecomment-259466153
   bearing = nextbearing = segment_end = nbdiff = distnext = ttn = lat = lon =
-    ttn = timestamp = calcmps = avgmps = maxmps = varmps = perc0mps = avgpbdif =
-    varpbdif = rog = bearvar = Nbelow3 = .id = entity_id = NULL
+    ttn = timestamp = calcmps = avgmps = maxmps = varmps = perc0mps = avgnbdif =
+    varnbdif = rog = bearvar = Nbelow3 = id = entity_id = seg_start_lon =
+    seg_start_lat = seg_start_time = seg_end_lon = seg_end_lat = seg_end_time =
+    segdist = NBelow3 = NULL
 
   if (group == TRUE) {
 

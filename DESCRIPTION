@@ -20,9 +20,9 @@ Imports:
     CircStats,
     data.table (>= 1.9.8),
     geodist (>= 0.0.4),
+    geosphere,
     lubridate,
     magrittr,
-    mathjaxr,
     stats
 Depends: R (>= 4.1)
 RdMacros: mathjaxr

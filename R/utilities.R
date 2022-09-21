@@ -29,14 +29,11 @@ splitDiffTime <- function(timestamp){
 #' adjust for unequal frequency of data collection.
 #'
 #' Time-weighted RoG is defined as
-#' \loadmathjax
-#' \mjdeqn{ \sqrt{\frac{\sum_i{w_j \times dist([\overline{lon}, \overline{lat}], [lon_j, lat_j]})}{\sum_i{w_j}}}}{sqrt(1/sum(w_j) * sum(w_j * dist(|mean_lon, mean_lat|, |lon_j, lat_j|)^2))}
+#' \deqn{ \sqrt{\frac{\sum_i{w_j \times dist([\overline{lon}, \overline{lat}], [lon_j, lat_j]})}{\sum_i{w_j}}}}{sqrt(1/sum(w_j) * sum(w_j * dist(|mean_lon, mean_lat|, |lon_j, lat_j|)^2))}
 #' Where
-#' \loadmathjax
-#' \mjdeqn{\overline{lon} = \frac{ \sum_j w_j lon_j}{\sum_j w_j} \quad \textrm{and} \quad \overline{lat} = \frac{ \sum_j w_j lat_j}{\sum_j w_j}}{mean_lon = sum(w_j * lon_j)/sum(w_j) and mean_lat = sum(w_j * lat_j)/sum(w_j)}
-#' And the weighting element w_j represents half the time interval during which a location was recorded
-#' \loadmathjax
-#' \mjdeqn{w_j = \frac{t_{j+1} - t_{j - 1}}{2}}{w_j = (t_j+1 - t_j-1)/2}
+#' \deqn{\overline{lon} = \frac{ \sum_j w_j lon_j}{\sum_j w_j} \quad \textrm{and} \quad \overline{lat} = \frac{ \sum_j w_j lat_j}{\sum_j w_j}}{mean_lon = sum(w_j * lon_j)/sum(w_j) and mean_lat = sum(w_j * lat_j)/sum(w_j)}
+#' And the weighting element \eqn{w_j} represents half the time interval during which a location was recorded
+#' \deqn{w_j = \frac{t_{j+1} - t_{j - 1}}{2}}{w_j = (t_j+1 - t_j-1)/2}
 #'
 #' @param lat_col Time-ordered vector of latitudes
 #' @param lon_col Time-ordered vector of longitudes
@@ -50,7 +47,6 @@ splitDiffTime <- function(timestamp){
 #' @importFrom geodist geodist_vec
 #' @importFrom stats weighted.mean
 #' @import data.table
-#' @import mathjaxr
 #' @examples
 #' # Inside a data.table
 #' dt <- data.table::data.table(
