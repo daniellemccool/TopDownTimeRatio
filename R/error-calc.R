@@ -1,18 +1,3 @@
-#' Calculate the Single Segment Synchronous Error on a \code{tdtr} object
-#'
-#' \code{singleSegmentSynchError} solves for the average distance with respect
-#' to time between the approximated segment returned by the top-down time ratio
-#' algorithm and the 'true' segment formed by two adjacent recorded points. This
-#' is currently in development.
-#'
-#'
-#'
-#'
-#' @param res Segmented results from \code{tdtr}
-#' @param tol Tolerance for zero comparisons. May vary with time scale.
-#' @return Adds by reference a column with segment error as given in Meratnia & de By \(2004\)
-#' @keywords internal
-
 singleSegmentSynchError <- function(res, tol = 1e-24){
 
   # Fix 'no visible vinding for global variable' https://github.com/Rdatatable/data.table/issues/850#issuecomment-259466153

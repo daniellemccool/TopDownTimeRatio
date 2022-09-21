@@ -82,3 +82,28 @@ radiusOfGyrationDT <- function(lat_col, lon_col, timestamp, dist_measure = "geod
 
 `.` <- list
 
+bearing <- function(mat) {
+  toRad <- pi / 180
+  p     <- cbind(mat[-nrow(mat), ], mat[-1, ])
+  p     <- p * toRad
+  from  <- p[, 1:2, drop=FALSE]
+  to    <- p[, 3:4, drop=FALSE]
+  dLon <- to[,1] - from[,1]
+
+  y <- sin(dLon)  * cos(to[,2])
+  x <- cos(from[,2]) * sin(to[,2]) - sin(from[,2]) * cos(to[,2]) * cos(dLon)
+  azm <- atan2(y, x) / toRad
+  azm <- (azm+360) %% 360
+  i <- azm > 180
+  azm[i] <- -1 * (360 - azm[i])
+  c(azm, NA)
+}
+
+circularDispersion <- function(degs){
+  toRad <- pi / 180
+  rads <- degs * toRad
+  sumcos <- sum(cos(rads))
+  sumsin <- sum(sin(rads))
+  n      <- length(rads)
+  1 - sqrt(sumcos^2 + sumsin^2)/n
+}

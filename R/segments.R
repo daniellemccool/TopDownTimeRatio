@@ -112,8 +112,6 @@ convertCoordsToDist <- function(data, coord_cols){
 #'   in meters per second, percentage of zero-speed entries, whether the segment
 #'   consists of fewer than 3 locations, and the time-weighted radius of
 #'   gyration.
-#' @importFrom geosphere bearing
-#' @importFrom CircStats circ.disp rad
 #' @export
 #' @examples
 #' df <- data.frame(entity_id = rep(1, 12),
@@ -138,10 +136,10 @@ getSegsExtra <- function(data, coord.type = c("coordinate", "distance", "both"),
     ttn = timestamp = calcmps = avgmps = maxmps = varmps = perc0mps = avgnbdif =
     varnbdif = rog = bearvar = Nbelow3 = id = entity_id = seg_start_lon =
     seg_start_lat = seg_start_time = seg_end_lon = seg_end_lat = seg_end_time =
-    segdist = NBelow3 = NULL
+    segdist = NBelow3 = .id = NULL
 
   if (group == TRUE) {
-
+    data[, bearing := bearing(as.matrix(.SD)) + 180, .SDcols = c("lon", "lat")]
     data[, nextbearing := shift(bearing, -1), .(.id, segment_id)]
     data[, nbdiff := pmin(abs(nextbearing - bearing),
                           360 - abs(nextbearing - bearing)) / 180]
@@ -158,7 +156,7 @@ getSegsExtra <- function(data, coord.type = c("coordinate", "distance", "both"),
       avgnbdif = mean(nbdiff, na.rm = TRUE),
       varnbdif = var(nbdiff, na.rm = TRUE),
       rog      = radiusOfGyrationDT(lat, lon, timestamp),
-      bearvar  = CircStats::circ.disp(CircStats::rad(na.omit(bearing)))$var,
+      bearvar  = circularDispersion(na.omit(bearing)),
       NBelow3       = .N < 3
     ), .(segment_id, .id)]
 
@@ -176,7 +174,7 @@ getSegsExtra <- function(data, coord.type = c("coordinate", "distance", "both"),
   } else {
     data <- copy(data)
 
-    data[, bearing := geosphere::bearing(as.matrix(.SD)) + 180, .SDcols = c("lon", "lat")]
+    data[, bearing := bearing(as.matrix(.SD)) + 180, .SDcols = c("lon", "lat")]
     data[, nextbearing := shift(bearing, -1), segment_id]
     data[, nbdiff := pmin(abs(nextbearing - bearing),
                           360 - abs(nextbearing - bearing)) / 180]
@@ -192,7 +190,7 @@ getSegsExtra <- function(data, coord.type = c("coordinate", "distance", "both"),
       avgnbdif = mean(nbdiff, na.rm = TRUE),
       varnbdif = var(nbdiff, na.rm = TRUE),
       rog      = radiusOfGyrationDT(lat, lon, timestamp),
-      bearvar  = CircStats::circ.disp(CircStats::rad(na.omit(bearing)))$var,
+      bearvar  = circularDispersion(na.omit(bearing)),
       NBelow3       = .N < 3
     ), segment_id]
 
