@@ -4,7 +4,7 @@ Title: Top-Down Time Ratio Segmentation for Coordinate Trajectories
 Version: 0.1.0
 Authors@R: person("Danielle", "McCool", email = "d.m.mccool@uu.nl",
     role = c("aut", "cre"), comment = c(ORCID = "0000-0002-7055-7539"))
-Description: Data colleted on movement behavior is often in the form of time-
+Description: Data collected on movement behavior is often in the form of time-
     stamped latitude/longitude coordinates sampled from the underlying movement
     behavior. These data can be compressed into a set of segments via the Top-
     Down Time Ratio Segmentation method described in Meratnia and de By (2004)
