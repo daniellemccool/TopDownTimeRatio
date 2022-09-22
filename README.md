@@ -13,8 +13,8 @@ implemented in McCool, Lugtig, and Schouten (2022).
 
 ## Installation
 
-When it’s released (it isn’t yet), you can install the released version
-of topdowntimeratio from [CRAN](https://CRAN.R-project.org) with:
+The released version of topdowntimeratio can be installed from
+[CRAN](https://CRAN.R-project.org) with:
 
 ``` r
 install.packages("topdowntimeratio")

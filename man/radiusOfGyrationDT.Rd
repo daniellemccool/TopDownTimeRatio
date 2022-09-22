@@ -11,7 +11,7 @@ radiusOfGyrationDT(lat_col, lon_col, timestamp, dist_measure = "geodesic")
 
 \item{lon_col}{Time-ordered vector of longitudes}
 
-\item{timestamp}{Timestamps associatd with the latitude/longitude pairs}
+\item{timestamp}{Timestamps associated with the latitude/longitude pairs}
 
 \item{dist_measure}{Passed through to geodist::geodist_vec, One of
 "haversine" "vincenty", "geodesic", or "cheap" specifying desired method of

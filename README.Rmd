@@ -24,7 +24,7 @@ The goal of topdowntimeratio is to condense sequences of longitudinal GPS data i
 
 ## Installation
 
-When it's released (it isn't yet), you can install the released version of topdowntimeratio from [CRAN](https://CRAN.R-project.org) with:
+The released version of topdowntimeratio can be installed from [CRAN](https://CRAN.R-project.org) with:
 
 ``` r
 install.packages("topdowntimeratio")
